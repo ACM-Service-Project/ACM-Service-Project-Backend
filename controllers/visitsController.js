@@ -9,18 +9,9 @@ const getAllVisitsForPatron = async (req, res, next) => {
 
 }
 const deleteAllVisitsForPatron = async (req, res, next) => {
-    VisitModel.find({'patronId':req.params.patronId}).exec((err, docs) => {
+    VisitModel.deleteMany({'patronId':req.params.patronId},(err, doc) => {
         if (err) next(new Error400(err.message));
-        else {
-            docs.forEach((doc) => {
-                VisitModel.findByIdAndDelete(doc._id, (err, doc) => {
-                    if (err) next(new Error400(err.message));
-                })
-            })
-            res.status(204).send({
-            message:"all of this patron's visits are now deleted"
-        })
-        }
+        else res.status(204).send(doc)
     })
 }
 

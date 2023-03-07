@@ -8,6 +8,14 @@ const getAllVisitsForPatron = async (req, res, next) => {
     })
 
 }
+
+
+const getLastVisitForPatron = async (req, res, next) => {
+    VisitModel.find({'patronId':req.params.patronId}).exec((err, docs) => {
+        if (err) next(new Error400(err.message));
+        else res.status(200).send(docs[docs.length-1]);
+    })
+}
 const deleteAllVisitsForPatron = async (req, res, next) => {
     VisitModel.deleteMany({'patronId':req.params.patronId},(err, doc) => {
         if (err) next(new Error400(err.message));
@@ -37,21 +45,41 @@ const millisecondsPerMinute = 60000
 const millisecondsPerDay = millisecondsPerMinute * 60 * 24;
 const requiredWaitingDays = 2;
 
+const getVisitsWithinTimeframe = async (req, res, next) => {
+    const daysAgo = Date.now() - req.params.days * millisecondsPerDay;
+    VisitModel.find({'patronId':req.params.patronId}).exec((err, docs) => {
+        if (err) next(new Error400(err.message));
+        else res.status(200).send(docs.filter(doc => {
+            return doc.visitDate.getTime() > daysAgo;
+        }))
+    })
+}
+const getAllPatronsWithinTimeframe = async (req ,res ,next) => {
+    const daysAgo = Date.now() - req.params.days * millisecondsPerDay;
+    VisitModel.find().exec((err, docs) => {
+        if (err) next(new Error400(err.message));
+        else res.status(200).send(docs.filter(doc => doc.visitDate.getTime() > daysAgo).map(doc => doc.patronId));
+
+    })
+
+}
+
 const validateVisit = (req, res, next) => {
     VisitModel.find({'patronId':req.params.patronId}).exec((err, docs) => {
     if (err) next(new Error400(err.message));
     else {
 
-        const latestVisitDate = docs[docs.length-1].visitDate.getTime();
-        const timeSinceLastVisit = Date.now() - latestVisitDate; //in milliseconds
-        const daysSinceVisit = timeSinceLastVisit/millisecondsPerDay;
+        const latestVisit = docs[docs.length-1]
+        const timeSinceLastVisit = Date.now() - latestVisit.visitDate.getTime();; //in milliseconds
+        const daysSinceLastVisit = timeSinceLastVisit/millisecondsPerDay;
 
-        const validVisit = daysSinceVisit>requiredWaitingDays
+        const validVisit = daysSinceLastVisit>requiredWaitingDays
 
         res.status(200).send({
-            daysSinceVisit,
+            latestVisit,
+            daysSinceLastVisit,
             validVisit,
-            message: `it has been ${validVisit?"more":"less"} than ${requiredWaitingDays} days since your last visit.`
+            message: `it has been ${validVisit?"more":"less"} than ${requiredWaitingDays} days since the last visit.`
         });
     }
     })
@@ -61,6 +89,9 @@ const validateVisit = (req, res, next) => {
 
 module.exports = {
     getAllVisitsForPatron,
+    getLastVisitForPatron,
+    getVisitsWithinTimeframe,
+    getAllPatronsWithinTimeframe,
     getVisitById,
     createVisit,
     validateVisit,

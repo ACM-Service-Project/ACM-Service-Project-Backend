@@ -12,5 +12,5 @@ const VisitSchema = new Schema({
   },
 });
 
-const Visit = mongoose.model("User", VisitSchema);
+const Visit = mongoose.model("Visit", VisitSchema);
 module.exports = Visit;

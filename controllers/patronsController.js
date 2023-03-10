@@ -31,8 +31,8 @@ const addPatron = async (req, res, next) => {
 }
 
 
-const updatePatron = (req, res, next) => {
-  PatronModel.findByIdAndUpdate(req.params.patronId, req.body, (err, doc) => {
+const updatePatron = async (req, res, next) => {
+  PatronModel.findByIdAndUpdate(req.params.patronId, {$set:req.body}).exec((err, doc) => {
     if (err) next(new Error400(err.message));
     else if (doc) {
       res.status(200).send(doc);

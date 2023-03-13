@@ -28,7 +28,7 @@
 
 * Search for patron
     - **/patrons/searchPatrons**
-    - Takes a POST request with an object with *at least* one of the following attributes:
+    - Takes a GET request with an object with *at least* one of the following attributes:
     -       {
                 lastName,
                 firstName,
@@ -39,7 +39,12 @@
 
 * Edit patron
     - **/patrons/updatePatron/{patronId}**
-    - Given a patron id and a PATCH request with an object, will replace the attributes in the object.
+    - Given a patron id and a PATCH request with an object, will replace the attributes in the object. 
+    - Example:
+    -       {
+                email: "a new email",
+                lastName: "a new last name"
+            }
 
 
 * Delete patron

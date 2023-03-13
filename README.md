@@ -18,17 +18,49 @@
 -edit user
 
 ### Patrons
--Get all patrons
+* Get all patrons
+    - **/patrons/getAllPatrons**
+    - Returns all patrons that are in the database.
 
--Get patron by id
+* Get patron by id
+    - **/patrons/getPatronById/{patronId}**
+    - Given a patron id, returns that patron.
 
--Get patron by name
+* Search for patron
+    - **/patrons/searchPatrons**
+    - Takes a GET request with an object with *at least* one of the following attributes:
+    -       {
+                lastName,
+                firstName,
+                phone,
+                email
+            }
+    - Returns an array with all patrons that fit that criteria.
 
--edit patron
+* Edit patron
+    - **/patrons/updatePatron/{patronId}**
+    - Given a patron id and a PATCH request with an object, will replace the attributes in the object. 
+    - Example:
+    -       {
+                email: "a new email",
+                lastName: "a new last name"
+            }
 
--delete patron
 
--create patron
+* Delete patron
+    - **/patrons/deletePatron/{patronId}**
+    - Given a patron id, deletes that patron from the database.
+
+* Create patron
+    - **/patrons/addPatron**
+    - Given a POST request with these attributes, creates a new patron:
+    -       {
+                lastName,
+                middleName(optional),
+                firstName,
+                phone,
+                email
+            }
 
 
 ### Visits

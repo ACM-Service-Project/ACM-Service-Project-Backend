@@ -7,6 +7,7 @@ const PatronSchema = new Schema({
   firstName: { type: String, required: true },
   middleName: String,
   lastName: { type: String, required: true },
+  address: String,
   phone: { type: String, required: true },
   email: { type: String, required: true },
 });

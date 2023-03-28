@@ -25,6 +25,13 @@ const addUser = (req, res, next) => {
   });
 };
 
+const searchUsers = async (req, res, next) => {
+  UserModel.find(req.body).exec((err, docs) => {
+      if (err) next(new Error400(err.message));
+      else res.status(200).send(docs);
+  })
+}
+
 const editUser = (req, res, next) => {
   UserModel.findByIdAndUpdate(req.params.id, req.body, (err, doc) => {
     if (err) next(new Error400(err.message));
@@ -59,6 +66,7 @@ const setAccountStatus = (req, res, next) => {
 module.exports = {
   getUsers,
   addUser,
+  searchUsers,
   editUser,
   getUserById,
   deleteUser,

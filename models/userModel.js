@@ -10,7 +10,8 @@ const UserSchema = new Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   // Field to handle deactivation rather than just deletion
-  active: { type: Boolean, required: true, default: true },
+  active: { type: Boolean, required: true, default: true }, 
+  role: { type: String, required: true, enum: ['Manager', 'Employee', 'Volunteer']}
 });
 
 const User = mongoose.model("User", UserSchema);

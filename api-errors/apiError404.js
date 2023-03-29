@@ -12,4 +12,4 @@ class ApiError404 extends BaseError {
   }
 }
 
-module.export = ApiError404;
+module.exports = ApiError404;

@@ -1,5 +1,8 @@
 const UserModel = require("../models/userModel");
 const Error400 = require("../api-errors/apiError400");
+const Error404 = require("../api-errors/apiError404");
+const Error401 = require("../api-errors/apiError401");
+const jwt = require("jsonwebtoken");
 
 // Returns all users in db.
 const getUsers = async (req, res, next) => {
@@ -63,6 +66,35 @@ const setAccountStatus = (req, res, next) => {
   );
 };
 
+const login = (req, res, next) => {
+  let accountInfo;
+  UserModel.findOne({ username: req.body.username })
+    .then((account) => {
+      if (!account) next(new Error404("Account not found"));
+      else {
+        accountInfo = account;
+        return account.password == req.body.password;
+      }
+    })
+    .then((match) => {
+      if (!match) next(new Error401("Incorrect Password"));
+      else {
+        const jsonwebtoken = jwt.sign(
+          {
+            email: accountInfo.email,
+            id: accountInfo._id,
+          },
+          process.env.JWT_SECRET_KEY,
+          { expiresIn: "1h" }
+        );
+        res.status(200).send({
+          token: jsonwebtoken,
+          userId: accountInfo._id,
+        });
+      }
+    });
+};
+
 module.exports = {
   getUsers,
   addUser,
@@ -71,4 +103,5 @@ module.exports = {
   getUserById,
   deleteUser,
   setAccountStatus,
+  login,
 };
